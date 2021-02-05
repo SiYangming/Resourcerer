@@ -1,0 +1,126 @@
+%\VignetteIndexEntry{Resourcerer Resourcerer}
+%\VignetteKeyword{annotation}
+%\VignettePackage{Resourcerer}
+\documentclass[12pt]{article}
+\usepackage{hyperref}
+\textwidth=6.2in
+\textheight=8.5in
+%\parskip=.3cm
+\oddsidemargin=.1in
+\evensidemargin=.1in
+\headheight=-.3in
+
+\newcommand{\Robject}[1]{{\texttt{#1}}}
+\newcommand{\Rfunction}[1]{{\texttt{#1}}}
+\newcommand{\Rpackage}[1]{{\textit{#1}}}
+
+\begin{document}
+\author{Jianhua Zhang}
+
+\title{How to use Resourcerer}
+
+\maketitle
+
+\section{Overview}
+
+The Gene Index Project (\url{http://compbio.dfci.harvard.edu/tgi/}, referred to as Rsouurcerer hereafter) offers
+annotation data files for some commonly used Affymetrix and cDNA chips
+for various organisms. The \Rpackage{Resourcerer} allows users
+to either read an annotation file from Resourcerer or build an
+annotation data package as the ones that are available in the MetaData
+section of Bioconductor. This vignette provides instructions on how to
+do both.
+
+\section{Getting Started}
+\subsection{Requirements}
+
+The package \Rpackage{AnntationDbi} is required to perform some of the tasks
+described below.
+
+<<>>=
+require("AnnotationDbi", quietly = TRUE)
+require("Resourcerer", quietly = TRUE)
+@
+
+\subsection{Read annotation files from Resourcerer}
+
+To read an annotation file from Resourcerer, one may call the function
+\Rfunction(getResourcerer) by providing the name of the target file to
+be read and the name of the organism the target file concerns. Please
+read the help file for \Rfunction(getResourcerer) for more information
+on the function and the arguments. In our example, we will try to read
+a file named \verb+Agilent_Human1_cDNA.zip+, which is the annotation data
+file for a cDNA chip for human located in the human subdirectory of
+the root ftp site of TIGR Resourcerer.
+
+<<>>=
+agilent <- getResourcerer("Agilent_Human1_cDNA.zip", organism = "human",
+destDir = file.path(path.package("Resourcerer"), "temp"), baseUrl =
+            "ftp://occams.dfci.harvard.edu/pub/bio/tgi/data/Resourcerer",
+            clean = TRUE )
+@
+
+The path for destDir tells \Rfunction(getResourcerer) to store the
+temporary files in the temp subdirectory of \Rfunction(Resourcerer) and
+clean = TRUE requests that the temporary files be removed when they are
+no longer needed. The first 4 columns of the top five rows of the file
+read are:
+
+<<>>=
+agilent[1:5, 1:4]
+@
+
+The full column names for \verb+Agilent_Human1_cDNA.zip+ are:
+
+<<>>=
+as.vector(colnames(agilent))
+@
+
+\subsection{Build BioC annotation data pacakges based on Resourcerer}
+
+To build an annotation data package that is similar to the ones
+available in the MetaData section of Bioconductor, one may call the
+function \Rfunction(Resourcerer2BioC). In the following example, we
+try to build an annotation data package for the same cDNA chip we used
+before. What the function does is to subtract probe ids and the
+matching public database ids (GenBank, UniGene, or Locuslink) from the
+annotation file obtained from Resourcerer and then map the probe ids
+to annotation data provided by other public data sources such as
+LocusLink, Gene ontology, KEGG, and so on. As those annotation data are
+normally very large, we only show the example code without
+running. One may try the example by coping and pasting the code. It
+may take up to an hour to have the sample file annotated.
+
+<<>>=
+
+if(interactive()) {
+    resourcerer2BioC("Agilent_Human1_cDNA.zip", organism = "human",
+       destDir =  file.path(path.package("Resourcerer"), "temp"),
+       pkgName = "AgilentHsa1",
+       srcUrls = getSrcUrl("all", "Homo sapiens"),
+       pkgPath =  file.path(path.package("Resourcerer"), "temp"),
+       otherSrc = NULL, baseMapType = "gb",
+       version = "1.1.0", fromWeb = TRUE,
+       baseUrl = "ftp://occams.dfci.harvard.edu/pub/bio/tgi/data/Resourcerer",
+               check = TRUE, author = list(authors = "Anonymous",
+                              maintainer = "Anonymous <anonimous@email.com>"))
+   }else{
+       print("Code is executed only when invoked interactively")
+   }
+@
+
+When the above code has been executed successfully, there should be a
+data package named AgilentHsa1 in the temp subdirectory of
+\Rpackage{Resourcerer}. The package can be used the same way as those
+in the MetaData section of Bioconductor.
+
+\end{document}
+
+
+
+
+
+
+
+
+

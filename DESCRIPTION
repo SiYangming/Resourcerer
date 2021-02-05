@@ -1,0 +1,16 @@
+Package: Resourcerer
+Title: Reads annotation data from TIGR Resourcerer or convert the
+        annotation data into Bioconductor data pacakge.
+Version: 1.38.0
+Author: Jianhua Zhang
+Description: This package allows user either to read an annotation
+        data file from TIGR Resourcerer as a matrix or convert the
+        file into a Bioconductor annotation data package using the
+        AnnBuilder package.
+Maintainer: Jianhua Zhang <jzhang@jimmy.harvard.edu>
+Depends: R (>= 1.9.0), Biobase, AnnotationDbi (>= 1.4.0)
+Suggests: human.db0, mouse.db0, rat.db0
+biocViews: Annotation, Microarray
+LazyLoad: yes
+License: LGPL
+Packaged: 2014-04-12 05:15:51 UTC; biocbuild
